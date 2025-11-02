@@ -1,0 +1,17 @@
+{
+  "name": "C# (.NET)",
+  "dockerComposeFile": "../../docker-compose.yaml",
+  "service": "nakolach-server",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "none",
+  "customizations": {
+      "vscode": {
+          "extensions": [
+              "patcx.vscode-nuget-gallery",
+              "EditorConfig.EditorConfig",
+              "ms-dotnettools.vscode-dotnet-runtime",
+              "ms-dotnettools.csharp"
+          ]
+      }
+  }
+}
