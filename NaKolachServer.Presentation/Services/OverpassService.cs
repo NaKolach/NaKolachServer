@@ -1,7 +1,10 @@
-using NaKolachServer.Models;
+using NaKolachServer.Presentation.Models;
+using System.Globalization;
 using System.Text.Json;
 
-class OverpassService : IOverpassService
+namespace NaKolachServer.Presentation.Services;
+
+public class OverpassService : IOverpassService
 {
 	private readonly HttpClient _httpClient;
 
@@ -10,16 +13,35 @@ class OverpassService : IOverpassService
 		_httpClient = httpClient;
 	}
 
-	public async Task<List<OverpassElement>> GetMapElementsAsync()
+	public async Task<List<OverpassElement>> GetMapElementsAsync(IEnumerable<string?> placeTypes, double lat,
+	double lon, int radius)
 	{
-		string query = """
+		if (placeTypes == null)
+		{
+			return new List<OverpassElement>();
+		}
+
+		var cleanTypes = placeTypes.
+		Where(t => !string.IsNullOrWhiteSpace(t)).
+		Select(t => t!.Trim().ToLower()).
+		ToList();
+
+		if (!cleanTypes.Any())
+		{
+			return new List<OverpassElement>();
+		}
+
+		string? filter = string.Join("|", cleanTypes);
+
+		string latStr = lat.ToString(CultureInfo.InvariantCulture);
+		string lonStr = lon.ToString(CultureInfo.InvariantCulture);
+
+		string? query = $"""
             [out:json][timeout:25];
             (
-              node["amenity"~"pub|bar|cafe"](54.34,18.63,54.36,18.66);
+              nwr["amenity"~"{filter}"](around:{radius},{latStr},{lonStr});
             );
-            out body;
-            >;
-            out skel qt;
+            out center;
             """;
 
 		var url = $"https://overpass-api.de/api/interpreter?data={Uri.EscapeDataString(query)}";
@@ -43,7 +65,7 @@ class OverpassService : IOverpassService
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine($"❌ Błąd pobierania danych: {ex.Message}");
+			Console.WriteLine($"Błąd pobierania danych: {ex.Message}");
 
 			return new List<OverpassElement>();
 		}

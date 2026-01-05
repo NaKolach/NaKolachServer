@@ -16,9 +16,10 @@ public class PlacesController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<IActionResult> GetPlaces()
+	public async Task<IActionResult> GetPlaces([FromQuery] List<string?> types, [FromQuery] double lat,
+	[FromQuery] double lon, [FromQuery] int radius)
 	{
-		var data = await _overpassService.GetMapElementsAsync();
+		var data = await _overpassService.GetMapElementsAsync(types, lat, lon, radius);
 		return Ok(data);
 	}
 }
