@@ -1,20 +1,36 @@
 using NaKolachServer.Presentation.Services;
 
+using System.Data;
+
+using Microsoft.EntityFrameworkCore;
+
+using NaKolachServer.Domain.Users;
+using NaKolachServer.Infrastructure;
+using NaKolachServer.Application.Users;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 
 builder.Services.AddHttpClient<IOverpassService, OverpassService>();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<DatabaseContext>(
+    options => options
+    .UseNpgsql(builder.Configuration["DATABASE_CONNECTION_STRING"]
+        ?? throw new NoNullAllowedException("DATABASE_CONNECTION_STRING environment variable is null."))
+    .UseSnakeCaseNamingConvention()
+);
+
+
+builder.Services.AddScoped<IUsersRepository, EFUsersRepository>();
+
+builder.Services.AddScoped<GetUserById>();
+builder.Services.AddScoped<InsertUser>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -24,7 +40,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
