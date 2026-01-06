@@ -16,12 +16,12 @@ public class GetPoints(IPointsRepository pointsRepository)
 
         var transform = ctFactory.CreateTransform(sourceCRS, targetCRS);
 
-        var src = new ProjCoordinate(searchParams.Longtidude, searchParams.Latidude);
+        var src = new ProjCoordinate(searchParams.Longitude, searchParams.Latitude);
         var dst = new ProjCoordinate();
 
         transform.Transform(src, dst);
 
-        searchParams = searchParams with { Latidude = dst.X, Longtidude = dst.Y };
+        searchParams = searchParams with { Latitude = dst.X, Longitude = dst.Y };
 
         return await pointsRepository.GetPoints(searchParams, cancellationToken);
     }

@@ -10,7 +10,7 @@ public class EFPointsRepository(OSMDatabaseContext databaseContext) : IPointsRep
 {
     public async Task<MapPoint[]> GetPoints(PointsSearchParams searchParams, CancellationToken cancellationToken)
     {
-        var centerLocation = new Point(searchParams.Latidude, searchParams.Longtidude) { SRID = 3857 };
+        var centerLocation = new Point(searchParams.Latitude, searchParams.Longitude) { SRID = 3857 };
         var pointsQueryable = databaseContext.PlanetOsmPoint
             .Where(p => p.Way.IsWithinDistance(centerLocation, searchParams.Radius))
             .AsQueryable();
