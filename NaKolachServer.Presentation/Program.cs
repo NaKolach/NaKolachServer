@@ -51,6 +51,8 @@ builder.Services.AddScoped<PasswordService>();
 
 builder.Services.AddScoped<FileService>();
 
+builder.Services.AddScoped<ILoginService, LoginService>();
+
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 
 builder.Services.AddScoped<GetPoints>();

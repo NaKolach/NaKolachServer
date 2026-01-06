@@ -10,12 +10,12 @@ public class PasswordService
 
 	public string? HashPassword(string? password)
 	{
-		return _hasher.HashPassword(null, password);
+		return _hasher.HashPassword(null!, password);
 	}
 
 	public bool VerifyPassword(string? password, string? storedHash)
 	{
-		var result = _hasher.VerifyHashedPassword(null, storedHash, password);
+		var result = _hasher.VerifyHashedPassword(null!, storedHash, password);
 
 		return result == PasswordVerificationResult.Success;
 	}

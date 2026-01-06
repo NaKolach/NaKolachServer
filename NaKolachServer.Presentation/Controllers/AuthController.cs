@@ -11,10 +11,12 @@ namespace NaKolachServer.Presentation.Controllers;
 public class AuthController : ControllerBase
 {
 	private readonly IRegisterService _registerService;
+	private readonly ILoginService _loginService;
 
-	public AuthController(IRegisterService registerService)
+	public AuthController(IRegisterService registerService, ILoginService loginService)
 	{
 		_registerService = registerService;
+		_loginService = loginService;
 	}
 
 	[HttpPost("register")]
@@ -29,5 +31,22 @@ public class AuthController : ControllerBase
 		{
 			return StatusCode(500, $"Błąd: {ex.Message}");
 		}
+	}
+
+	[HttpPost("login")]
+	public async Task<IActionResult> Login([FromBody] LoginModel model)
+	{
+		string? result = await _loginService.LoginServiceAsync(model);
+
+		if (result == null)
+		{
+			return Unauthorized(new { message = "Błędny email lub hasło!" });
+		}
+
+		return Ok(new
+		{
+			token = result,
+			message = "Zalogowano pomyślnie!"
+		});
 	}
 }
