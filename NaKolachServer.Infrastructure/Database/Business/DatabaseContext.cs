@@ -2,7 +2,7 @@
 
 using NaKolachServer.Domain.Users;
 
-namespace NaKolachServer.Infrastructure;
+namespace NaKolachServer.Infrastructure.Database.Business;
 
 public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbContext(options)
 {

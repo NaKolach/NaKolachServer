@@ -1,25 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-using NaKolachServer.Presentation.Services;
-using NaKolachServer.Presentation.Models;
+
+using NaKolachServer.Application.Points;
+using NaKolachServer.Domain.Points;
+using NaKolachServer.Presentation.Controllers.Dtos;
 
 namespace NaKolachServer.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlacesController : ControllerBase
+public class PlacesController(GetPoints getPoints) : ControllerBase
 {
-	private readonly IOverpassService _overpassService;
-
-	public PlacesController(IOverpassService overpassService)
-	{
-		_overpassService = overpassService;
-	}
-
-	[HttpGet]
-	public async Task<IActionResult> GetPlaces([FromQuery] List<string?> types, [FromQuery] double lat,
-	[FromQuery] double lon, [FromQuery] int radius)
-	{
-		var data = await _overpassService.GetMapElementsAsync(types, lat, lon, radius);
-		return Ok(data);
-	}
+    [HttpGet]
+    public async Task<IActionResult> GetPlaces([FromQuery] PointsSearchParams searchParams, CancellationToken cancellationToken)
+    {
+        var data = await getPoints.Execute(searchParams, cancellationToken);
+        return Ok(data);
+    }
 }

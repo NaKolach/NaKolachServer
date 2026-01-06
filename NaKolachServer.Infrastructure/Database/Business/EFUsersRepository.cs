@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 using NaKolachServer.Domain.Users;
 
-namespace NaKolachServer.Infrastructure;
+namespace NaKolachServer.Infrastructure.Database.Business;
 
 public class EFUsersRepository(DatabaseContext databaseContext) : IUsersRepository
 {
