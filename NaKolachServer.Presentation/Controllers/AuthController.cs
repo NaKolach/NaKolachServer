@@ -18,7 +18,7 @@ public class AuthController : ControllerBase
 	}
 
 	[HttpPost("register")]
-	public async Task<IActrionResult> Register([FromBody] RegistrationModel model)
+	public async Task<IActionResult> Register([FromBody] RegistrationModel model)
 	{
 		try
 		{

@@ -4,5 +4,5 @@ namespace NaKolachServer.Presentation.Services;
 
 public interface IRegisterService
 {
-	Task RegisterService(RegistrationModel registrationData);
+	Task RegisterServiceAsync(RegistrationModel registrationData);
 }
