@@ -23,6 +23,21 @@ public class GetPoints(IPointsRepository pointsRepository)
 
         searchParams = searchParams with { Latitude = dst.X, Longitude = dst.Y };
 
-        return await pointsRepository.GetPoints(searchParams, cancellationToken);
+        var points = await pointsRepository.GetPoints(searchParams, cancellationToken);
+
+        transform = ctFactory.CreateTransform(targetCRS, sourceCRS);
+
+        var returnPoints = new List<MapPoint>();
+        foreach (var point in points)
+        {
+            src = new ProjCoordinate(point.Latidude, point.Longtidude);
+            dst = new ProjCoordinate();
+
+            transform.Transform(src, dst);
+
+            returnPoints.Add(point with { Latidude = dst.Y, Longtidude = dst.X });
+        }
+
+        return [.. returnPoints];
     }
 }
