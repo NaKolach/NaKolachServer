@@ -23,7 +23,6 @@ builder.Services.AddDbContext<DatabaseContext>(
     .UseSnakeCaseNamingConvention()
 );
 
-
 builder.Services.AddScoped<IUsersRepository, EFUsersRepository>();
 
 builder.Services.AddScoped<GetUserById>();
@@ -39,8 +38,6 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "NaKolachServer API v1");
     });
 }
-
-// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

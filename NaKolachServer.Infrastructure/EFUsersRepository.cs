@@ -15,5 +15,6 @@ public class EFUsersRepository(DatabaseContext databaseContext) : IUsersReposito
     public async Task InsertUser(User user, CancellationToken cancellationToken)
     {
         await databaseContext.Users.AddAsync(user, cancellationToken);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 }
