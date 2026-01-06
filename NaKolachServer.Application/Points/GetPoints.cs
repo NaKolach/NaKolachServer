@@ -30,12 +30,12 @@ public class GetPoints(IPointsRepository pointsRepository)
         var returnPoints = new List<MapPoint>();
         foreach (var point in points)
         {
-            src = new ProjCoordinate(point.Latidude, point.Longtidude);
+            src = new ProjCoordinate(point.Latitude, point.Longitude);
             dst = new ProjCoordinate();
 
             transform.Transform(src, dst);
 
-            returnPoints.Add(point with { Latidude = dst.Y, Longtidude = dst.X });
+            returnPoints.Add(point with { Latitude = dst.Y, Longitude = dst.X });
         }
 
         return [.. returnPoints];

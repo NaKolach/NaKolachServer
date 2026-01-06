@@ -30,6 +30,6 @@ public class EFPointsRepository(OSMDatabaseContext databaseContext) : IPointsRep
             .OrderBy(p => p.OsmId)
             .ToArrayAsync(cancellationToken);
 
-        return [.. points.Select(p => new MapPoint(Id: p.OsmId, Name: p.Name, Amenity: p.Amenity, Latidude: p.Way.Coordinate.X, Longtidude: p.Way.Coordinate.Y))];
+        return [.. points.Select(p => new MapPoint(Id: p.OsmId, Name: p.Name, Amenity: p.Amenity, Latitude: p.Way.Coordinate.X, Longitude: p.Way.Coordinate.Y))];
     }
 }
