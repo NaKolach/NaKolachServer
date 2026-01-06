@@ -47,6 +47,11 @@ builder.Services.AddScoped<IRouteProvider, GraphhopperRouteProvider>();
 
 builder.Services.AddScoped<GetUserById>();
 builder.Services.AddScoped<InsertUser>();
+builder.Services.AddScoped<PasswordService>();
+
+builder.Services.AddScoped<FileService>();
+
+builder.Services.AddScoped<IRegisterService, RegisterService>();
 
 builder.Services.AddScoped<GetPoints>();
 
