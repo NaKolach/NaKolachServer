@@ -1,26 +1,33 @@
 using NaKolachServer.Presentation.Models;
+using NaKolachServer.Infrastructure;
+using NaKolachServer.Domain.Users;
 
 namespace NaKolachServer.Presentation.Services;
 
 public class LoginService : ILoginService
 {
 	private readonly PasswordService _passwordService;
-	private readonly FileService _fileService;
+	private readonly IUsersRepository _usersRepository;
 
-	public LoginService(FileService fileService, PasswordService passwordService)
+	public LoginService(IUsersRepository usersRepository, PasswordService passwordService)
 	{
 		_passwordService = passwordService;
-		_fileService = fileService;
+		_usersRepository = usersRepository;
 	}
 
 	public async Task<string?> LoginServiceAsync(LoginModel loginData)
 	{
-		var userData = await _fileService.ReadFromFileAsync();
+		var userData = await _usersRepository.GetUserByEmail(loginData.Email, CancellationToken.None);
 
-		if (userData!.Email == loginData.Email && _passwordService.VerifyPassword(loginData.Password!, userData!.Password))
+		if (userData == null) return null;
+
+		bool isPasswordOk = _passwordService.VerifyPassword(loginData.Password!, userData.Password!);
+
+		if (isPasswordOk)
 		{
-			return "Tu beda klucze JWT";
+			return "Sukces";
 		}
+
 		return null;
 	}
 }

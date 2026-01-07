@@ -1,30 +1,33 @@
 using NaKolachServer.Presentation.Models;
+using NaKolachServer.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using NaKolachServer.Domain.Users;
 
 namespace NaKolachServer.Presentation.Services;
 
 public class RegisterService : IRegisterService
 {
 	private readonly PasswordService _passwordService;
-	private readonly FileService _fileService;
+	private readonly IUsersRepository _userRepository;
 
-	public RegisterService(PasswordService passwordService, FileService fileService)
+	public RegisterService(PasswordService passwordService, IUsersRepository usersRepository)
 	{
 		_passwordService = passwordService;
-		_fileService = fileService;
+		_userRepository = usersRepository;
 	}
 
 	public async Task RegisterServiceAsync(RegistrationModel registrationData)
 	{
-		string? hashedPassword = _passwordService.HashPassword(registrationData.Password);
+		string? hashedPassword = _passwordService.HashPassword(registrationData.Password!);
 
-		var userToSafe = new RegistrationModel
+		var userToSave = new User
 		{
+			Id = Guid.NewGuid(),
 			Login = registrationData.Login,
-			Password = hashedPassword,
-			Email = registrationData.Email
+			Email = registrationData.Email,
+			Password = hashedPassword
 		};
 
-		await _fileService.SaveToFileAsync(userToSafe);
+		await _userRepository.InsertUser(userToSave, CancellationToken.None);
 	}
 }

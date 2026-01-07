@@ -1,6 +1,9 @@
 DROP TABLE IF EXISTS users;
 
-CREATE TABLE users(
+CREATE TABLE Users (
     id UUID NOT NULL,
-    name VARCHAR(100) NOT NULL
-)
+    login TEXT NULL,
+    email TEXT NULL,
+    password TEXT NULL,
+    CONSTRAINT pk_users PRIMARY KEY ("id")
+);

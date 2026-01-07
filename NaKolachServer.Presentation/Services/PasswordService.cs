@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using NaKolachServer.Domain.Users;
 
 namespace NaKolachServer.Presentation.Services;
-
-public class User { }
 
 public class PasswordService
 {

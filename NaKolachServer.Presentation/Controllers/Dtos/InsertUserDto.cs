@@ -1,3 +1,3 @@
-namespace NaKolachServer.Presentation.Controllers.Dtos;
+// namespace NaKolachServer.Presentation.Controllers.Dtos;
 
-public record InsertUserDto(string Name);
+// public record InsertUserDto(string Name);

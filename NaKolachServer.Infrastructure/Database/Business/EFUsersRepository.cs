@@ -17,4 +17,9 @@ public class EFUsersRepository(DatabaseContext databaseContext) : IUsersReposito
         await databaseContext.Users.AddAsync(user, cancellationToken);
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<User?> GetUserByEmail(string? email, CancellationToken cancellationToken)
+    {
+        return await databaseContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+    }
 }
