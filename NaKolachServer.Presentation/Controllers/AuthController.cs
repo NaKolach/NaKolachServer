@@ -36,17 +36,13 @@ public class AuthController : ControllerBase
 	[HttpPost("login")]
 	public async Task<IActionResult> Login([FromBody] LoginModel model)
 	{
-		string? result = await _loginService.LoginServiceAsync(model);
+		var result = await _loginService.LoginServiceAsync(model);
 
 		if (result == null)
 		{
 			return Unauthorized(new { message = "Błędny email lub hasło!" });
 		}
 
-		return Ok(new
-		{
-			token = result,
-			message = "Zalogowano pomyślnie!"
-		});
+		return Ok(result);
 	}
 }

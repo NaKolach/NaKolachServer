@@ -4,5 +4,5 @@ namespace NaKolachServer.Presentation.Services;
 
 public interface ILoginService
 {
-	Task<string?> LoginServiceAsync(LoginModel loginData);
+	Task<LoginResponseDto?> LoginServiceAsync(LoginModel loginData);
 }

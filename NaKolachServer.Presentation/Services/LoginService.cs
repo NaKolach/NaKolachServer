@@ -15,9 +15,9 @@ public class LoginService : ILoginService
 		_usersRepository = usersRepository;
 	}
 
-	public async Task<string?> LoginServiceAsync(LoginModel loginData)
+	public async Task<LoginResponseDto?> LoginServiceAsync(LoginModel loginData)
 	{
-		var userData = await _usersRepository.GetUserByEmail(loginData.Email, CancellationToken.None);
+		var userData = await _usersRepository.GetUserByEmail(loginData.Email!, CancellationToken.None);
 
 		if (userData == null) return null;
 
@@ -25,6 +25,8 @@ public class LoginService : ILoginService
 
 		if (!isPasswordOk) return null;
 
-		return Convert.ToBase64String(userData.Id.ToByteArray());
+		var userKey = Convert.ToBase64String(userData.Id.ToByteArray());
+
+		return new LoginResponseDto(userData.Login!, userKey);
 	}
 }
