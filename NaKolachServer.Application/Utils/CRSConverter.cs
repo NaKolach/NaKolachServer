@@ -1,3 +1,5 @@
+using Proj4Net.Core;
+
 namespace NaKolachServer.Application.Utils;
 
 public static class CRSConverter
