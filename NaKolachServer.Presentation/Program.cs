@@ -1,9 +1,6 @@
 using NaKolachServer.Presentation.Services;
-
 using System.Data;
-
 using Microsoft.EntityFrameworkCore;
-
 using NaKolachServer.Domain.Users;
 using NaKolachServer.Application.Users;
 using NaKolachServer.Infrastructure.Database.Business;
@@ -65,6 +62,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "NaKolachServer API v1"));
 }
 
+app.UseAuthorization();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

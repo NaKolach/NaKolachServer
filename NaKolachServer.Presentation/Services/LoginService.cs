@@ -23,11 +23,8 @@ public class LoginService : ILoginService
 
 		bool isPasswordOk = _passwordService.VerifyPassword(loginData.Password!, userData.Password!);
 
-		if (isPasswordOk)
-		{
-			return "Sukces";
-		}
+		if (!isPasswordOk) return null;
 
-		return null;
+		return Convert.ToBase64String(userData.Id.ToByteArray());
 	}
 }

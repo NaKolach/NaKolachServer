@@ -7,13 +7,19 @@ public class PasswordService
 {
 	private readonly PasswordHasher<User> _hasher = new PasswordHasher<User>();
 
-	public string? HashPassword(string? password)
+	public string? HashPassword(string password)
 	{
 		return _hasher.HashPassword(null!, password);
 	}
 
 	public bool VerifyPassword(string? password, string? storedHash)
 	{
+
+		if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(storedHash))
+		{
+			return false;
+		}
+
 		var result = _hasher.VerifyHashedPassword(null!, storedHash, password);
 
 		return result == PasswordVerificationResult.Success;
