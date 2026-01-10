@@ -1,7 +1,7 @@
 namespace NaKolachServer.Domain.Points;
 
 public record PointsSearchParams(
-    AmenityType[] Types,
+    string[] Categories,
     double Latitude,
     double Longitude,
     int Radius

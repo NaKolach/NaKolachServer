@@ -15,16 +15,8 @@ public class EFPointsRepository(OSMDatabaseContext databaseContext) : IPointsRep
             .Where(p => p.Way.IsWithinDistance(centerLocation, searchParams.Radius))
             .AsQueryable();
 
-        if (searchParams.Types.Length != 0)
-        {
-            var typesAsStrings = searchParams.Types.Select(a => a.ToString());
-            pointsQueryable = pointsQueryable.Where(p => typesAsStrings.Contains(p.Amenity));
-        }
-        else
-        {
-            string[] types = ["bar", "cafe", "restaurant"];
-            pointsQueryable = pointsQueryable.Where(p => types.Contains(p.Amenity));
-        }
+        if (searchParams.Categories.Length != 0)
+            pointsQueryable = pointsQueryable.Where(p => searchParams.Categories.Contains(p.Amenity ?? p.Shop ?? p.Tourism ?? p.Leisure));
 
         var points = await pointsQueryable
             .OrderBy(p => p.OsmId)
