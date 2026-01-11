@@ -10,12 +10,14 @@ using NaKolachServer.Infrastructure.Database.Business;
 using NaKolachServer.Infrastructure.Database.OSM;
 using NaKolachServer.Application.Points;
 using NaKolachServer.Domain.Points;
+using NaKolachServer.Application.Routes;
+using NaKolachServer.Domain.Routes;
+using NaKolachServer.Infrastructure.RouteProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddHttpClient<IOverpassService, OverpassService>();
 
 builder.Services.AddOpenApi();
 
@@ -34,13 +36,21 @@ builder.Services.AddDbContext<OSMDatabaseContext>(
     .UseSnakeCaseNamingConvention()
 );
 
+// builder.Services.AddHttpClient<IOverpassService, OverpassService>();
+// builder.Services.AddHttpClient<IRouteProvider, GraphhopperRouteProvider>();
+
+builder.Services.AddHttpClient();
+
 builder.Services.AddScoped<IUsersRepository, EFUsersRepository>();
 builder.Services.AddScoped<IPointsRepository, EFPointsRepository>();
+builder.Services.AddScoped<IRouteProvider, GraphhopperRouteProvider>();
 
 builder.Services.AddScoped<GetUserById>();
 builder.Services.AddScoped<InsertUser>();
 
 builder.Services.AddScoped<GetPoints>();
+
+builder.Services.AddScoped<CalculateRoute>();
 
 var app = builder.Build();
 
