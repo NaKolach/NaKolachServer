@@ -10,7 +10,7 @@ public static class CRSConverter
     private static readonly CoordinateReferenceSystem _crs4326 = _crsFactory.CreateFromName("EPSG:4326");
     private static readonly CoordinateReferenceSystem _crs3857 = _crsFactory.CreateFromName("EPSG:3857");
 
-    public static ProjCoordinate Csr4326to3857(double longitude, double latitude)
+    public static ProjCoordinate CRS4326to3857(double longitude, double latitude)
     {
         var sourcePoint = new ProjCoordinate(longitude, latitude);
         var resultPoint = new ProjCoordinate();
@@ -21,7 +21,7 @@ public static class CRSConverter
         return resultPoint;
     }
 
-    public static ProjCoordinate Csr3857to4326(double longitude, double latitude)
+    public static ProjCoordinate CRS3857to4326(double longitude, double latitude)
     {
         var sourcePoint = new ProjCoordinate(latitude, longitude);
         var resultPoint = new ProjCoordinate();
