@@ -39,19 +39,19 @@ public class EFPointsRepository(OSMDatabaseContext databaseContext) : IPointsRep
     {
         var centerLocation = new NetTopologySuite.Geometries.Point(latitude, longitude) { SRID = 3857 };
 
-        var totalPoints = await databaseContext.PlanetOsmPoint
-            .Where(p => p.Way.IsWithinDistance(centerLocation, radius) &&
-            p.Amenity == category
-            || p.Shop == category
-            || p.Tourism == category
-            || p.Leisure == category
-        )
-        .CountAsync(cancellationToken);
-
-        var randomIndex = Random.Shared.Next(0, totalPoints);
         return await databaseContext.PlanetOsmPoint
-            .Skip(randomIndex)
-            .Select(p => new Point(p.OsmId, p.Name, FindCategory(new[] { category }, p.Amenity, p.Shop, p.Tourism, p.Leisure), p.Way.Coordinate.X, p.Way.Coordinate.Y))
+            .Where(p => p.Way.IsWithinDistance(centerLocation, radius))
+            .Where(p => p.Amenity == category
+                    || p.Shop == category
+                    || p.Tourism == category
+                    || p.Leisure == category)
+            .OrderBy(p => EF.Functions.Random())
+            .Select(p => new Point(
+                p.OsmId,
+                p.Name,
+                category,
+                p.Way.Coordinate.X,
+                p.Way.Coordinate.Y))
             .FirstOrDefaultAsync(cancellationToken);
     }
 
