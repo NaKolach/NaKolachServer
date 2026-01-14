@@ -1,48 +1,30 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
 using Microsoft.AspNetCore.Mvc;
-using NaKolachServer.Presentation.Models;
-using NaKolachServer.Presentation.Services;
-using NaKolachServer.Presentation.Controllers;
+using Microsoft.IdentityModel.Tokens;
+
+using NaKolachServer.Application.Auth;
+using NaKolachServer.Presentation.Controllers.Dtos;
 
 namespace NaKolachServer.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 
-public class AuthController : ControllerBase
+public class AuthController(RegisterUser insertUser, VerifyUserCredentials verifyUserCredentials) : ControllerBase
 {
-	private readonly IRegisterService _registerService;
-	private readonly ILoginService _loginService;
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto dto, CancellationToken cancellationToken)
+    {
+        await insertUser.Execute(dto.Login, dto.Email, dto.Password, cancellationToken);
+        return Ok();
+    }
 
-	public AuthController(IRegisterService registerService, ILoginService loginService)
-	{
-		_registerService = registerService;
-		_loginService = loginService;
-	}
-
-	[HttpPost("register")]
-	public async Task<IActionResult> Register([FromBody] RegistrationModel model)
-	{
-		try
-		{
-			await _registerService.RegisterServiceAsync(model);
-			return Ok(new { message = "Sukces!" });
-		}
-		catch (Exception ex)
-		{
-			return StatusCode(500, $"Błąd: {ex.Message}");
-		}
-	}
-
-	[HttpPost("login")]
-	public async Task<IActionResult> Login([FromBody] LoginModel model)
-	{
-		var result = await _loginService.LoginServiceAsync(model);
-
-		if (result == null)
-		{
-			return Unauthorized(new { message = "Błędny email lub hasło!" });
-		}
-
-		return Ok(result);
-	}
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginUserDto dto, CancellationToken cancellationToken)
+    {
+        var token = await verifyUserCredentials.Execute(dto.Login, dto.Password, cancellationToken);
+        return Ok(token);
+    }
 }

@@ -1,9 +1,9 @@
 namespace NaKolachServer.Domain.Users;
 
-public class User
+public record User
 {
-	public Guid Id { get; init; }
-	public string? Login { get; init; }
-	public string? Email { get; set; }
-	public string? Password { get; set; }
+    public required Guid Id { get; init; }
+    public required string Login { get; init; }
+    public required string Email { get; init; }
+    public string? PasswordHash { get; set; }
 }
