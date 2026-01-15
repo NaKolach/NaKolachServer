@@ -15,7 +15,8 @@ public class ProfileController(GetUserById getUserById) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetProfile(CancellationToken cancellationToken)
     {
-        var user = await getUserById.Execute(User.GetUserId(), cancellationToken);
+        var userContext = User.GetContext();
+        var user = await getUserById.Execute(userContext.Id, cancellationToken);
         return Ok(user);
     }
 }

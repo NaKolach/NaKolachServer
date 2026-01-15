@@ -1,20 +1,25 @@
 using System.Security.Claims;
 
+using NaKolachServer.Domain.Users;
+
 using Newtonsoft.Json;
 
 namespace NaKolachServer.Presentation.Utils;
 
 public static class ClaimsExtensions
 {
-    public static Guid GetUserId(this ClaimsPrincipal user)
+    public static UserContext GetContext(this ClaimsPrincipal user)
     {
-        var idString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? user.FindFirstValue("sub");
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? user.FindFirstValue("sub")
+            ?? throw new Exception("Token is missing sub.");
 
-        Console.WriteLine("XD ", string.Join(", ", user.Claims.Select(c => new { c.Type, c.Value })));
+        var login = user.FindFirst(ClaimTypes.Name)?.Value
+            ?? user.FindFirstValue("name")
+            ?? throw new Exception("Token is missing name.");
 
-        if (Guid.TryParse(idString, out var id)) return id;
+        Console.WriteLine("XD ", userId, login);
 
-        throw new UnauthorizedAccessException("User ID claim is missing or invalid.");
+        return new UserContext(Guid.Parse(userId), login);
     }
 }
