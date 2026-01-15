@@ -64,6 +64,19 @@ builder.Services.AddAuthentication(options =>
             ?? throw new InvalidOperationException("AUTH_KEY environment variable is null."))
         )
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (context.Request.Cookies.TryGetValue("accessToken", out var token))
+            {
+                context.Token = token;
+            }
+
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddHttpClient();
