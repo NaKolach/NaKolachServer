@@ -81,6 +81,7 @@ builder.Services.AddScoped<GetUserById>();
 builder.Services.AddScoped<RegisterUser>();
 builder.Services.AddScoped<VerifyUserCredentials>();
 builder.Services.AddScoped<RefreshUserCredential>();
+builder.Services.AddScoped<RevokeUserCredentials>();
 
 builder.Services.AddScoped<GetPoints>();
 
