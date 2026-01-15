@@ -51,7 +51,7 @@ public class AuthController(
         return NoContent();
     }
 
-    [HttpPost]
+    [HttpPost("logout")]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         var userContext = User.GetContext();
