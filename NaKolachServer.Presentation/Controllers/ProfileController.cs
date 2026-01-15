@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using NaKolachServer.Application.Users;
@@ -5,6 +6,7 @@ using NaKolachServer.Presentation.Utils;
 
 namespace NaKolachServer.Presentation.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 

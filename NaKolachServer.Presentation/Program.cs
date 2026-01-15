@@ -18,7 +18,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using NaKolachServer.Domain.Auth;
 using NaKolachServer.Presentation.Configurations;
-using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,16 +68,19 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddSingleton<IAuthCredentialProvider, JwtAuthTokenProvider>();
+builder.Services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
 builder.Services.AddScoped<IUserPasswordHasher, UserPasswordHasher>();
 
+builder.Services.AddScoped<IAuthRepository, EFAuthRepository>();
 builder.Services.AddScoped<IUsersRepository, EFUsersRepository>();
 builder.Services.AddScoped<IPointsRepository, EFPointsRepository>();
 builder.Services.AddScoped<IRouteProvider, GraphhopperRouteProvider>();
 
 builder.Services.AddScoped<GetUserById>();
+
 builder.Services.AddScoped<RegisterUser>();
 builder.Services.AddScoped<VerifyUserCredentials>();
+builder.Services.AddScoped<RefreshUserCredential>();
 
 builder.Services.AddScoped<GetPoints>();
 
