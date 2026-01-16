@@ -15,7 +15,7 @@ public class VerifyUserCredentials(
         var user = await usersRepository.GetUserByLogin(login, cancellationToken)
             ?? throw new UnauthorizedException();
 
-        var isPasswordValid = userPasswordHasher.VerifyPassword(user, password, user.PasswordHash);
+        var isPasswordValid = userPasswordHasher.VerifyPassword(user, password, user.PasswordHash!);
         if (!isPasswordValid) throw new UnauthorizedException();
 
         var accessToken = authCredentialProvider.NewAccessToken(user.Id.ToString(), login);

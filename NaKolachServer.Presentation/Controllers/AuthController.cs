@@ -34,7 +34,7 @@ public class AuthController(
         new CookieOptions
         {
             HttpOnly = true,
-            Secure = false, //to change when https
+            Secure = true,
             SameSite = SameSiteMode.Strict,
             Expires = now.AddMinutes(5)
         });
@@ -43,7 +43,7 @@ public class AuthController(
         new CookieOptions
         {
             HttpOnly = true,
-            Secure = false, //to change when https
+            Secure = true,
             SameSite = SameSiteMode.Strict,
             Expires = now.AddDays(7)
         });
@@ -55,12 +55,10 @@ public class AuthController(
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         var userContext = User.GetContext();
-        if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-        {
-            return BadRequest("Refresh Token is missing.");
-        }
+        Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
 
-        await revokeUserCredentials.Execute(userContext, refreshToken, cancellationToken);
+        if (refreshToken is not null)
+            await revokeUserCredentials.Execute(userContext, refreshToken, cancellationToken);
 
         Response.Cookies.Delete("accessToken");
         Response.Cookies.Delete("refreshToken");
@@ -72,9 +70,7 @@ public class AuthController(
     public async Task<IActionResult> RefreshAccessToken(CancellationToken cancellationToken)
     {
         if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-        {
             return BadRequest("Refresh Token is missing.");
-        }
 
         var tokenPair = await refreshUserCredential.Execute(User.GetContext(), refreshToken, cancellationToken);
         return Ok(new { AccessToken = tokenPair.Item1, RefreshToken = tokenPair.Item2 });
