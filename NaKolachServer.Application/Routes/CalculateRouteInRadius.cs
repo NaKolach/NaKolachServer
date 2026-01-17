@@ -1,12 +1,15 @@
 using NaKolachServer.Application.Utils;
 using NaKolachServer.Domain.Points;
 using NaKolachServer.Domain.Routes;
+using NaKolachServer.Domain.Users;
+
+using Newtonsoft.Json;
 
 namespace NaKolachServer.Application.Routes;
 
-public class CalculateRouteInRadius(IPointsRepository pointsRepository, IRouteProvider routeProvider)
+public class CalculateRouteInRadius(IPointsRepository pointsRepository, IRoutesRepository routesRepository, IRouteProvider routeProvider)
 {
-    public async Task<PathWithPoints[]> Execute(PointsSearchParams searchParams, CancellationToken cancellationToken)
+    public async Task<PathWithPoints[]> Execute(UserContext userContext, PointsSearchParams searchParams, CancellationToken cancellationToken)
     {
         var startPoint = CRSConverter.CRS4326to3857(searchParams.Longitude, searchParams.Latitude);
 
@@ -29,6 +32,17 @@ public class CalculateRouteInRadius(IPointsRepository pointsRepository, IRoutePr
             .. pointsOfInterest.Select(p => new Coordinates(p.Longitude, p.Latitude)),
             new Coordinates(searchParams.Longitude, searchParams.Latitude)],
          cancellationToken);
+
+        await routesRepository.InsertRoute(new Route(
+            Id: Guid.NewGuid(),
+            AuthorId: userContext.Id,
+            Distance: route.Distance,
+            Time: route.Time,
+            Path: JsonConvert.SerializeObject(route.Paths),
+            Categories: [.. pointsOfInterest.Where(p => p.Category is not null).Select(p => p.Category)],
+            Points: JsonConvert.SerializeObject(pointsOfInterest),
+            CreatedAt: DateTimeOffset.UtcNow
+        ), cancellationToken);
 
         return [
             new PathWithPoints(

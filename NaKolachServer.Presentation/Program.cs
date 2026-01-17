@@ -91,6 +91,7 @@ builder.Services.AddScoped<IUserPasswordHasher, UserPasswordHasher>();
 builder.Services.AddScoped<IAuthRepository, EFAuthRepository>();
 builder.Services.AddScoped<IUsersRepository, EFUsersRepository>();
 builder.Services.AddScoped<IPointsRepository, EFPointsRepository>();
+builder.Services.AddScoped<IRoutesRepository, EFRoutesRepository>();
 builder.Services.AddScoped<IRouteProvider, GraphhopperRouteProvider>();
 
 builder.Services.AddScoped<GetUserById>();

@@ -73,6 +73,26 @@ public class AuthController(
             return BadRequest("Refresh Token is missing.");
 
         var tokenPair = await refreshUserCredential.Execute(dto.UserId, refreshToken, cancellationToken);
-        return Ok(new { AccessToken = tokenPair.Item1, RefreshToken = tokenPair.Item2 });
+
+        var now = DateTime.UtcNow;
+        Response.Cookies.Append("accessToken", tokenPair.Item1,
+        new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = now.AddMinutes(5)
+        });
+
+        Response.Cookies.Append("refreshToken", tokenPair.Item2,
+        new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = now.AddDays(7)
+        });
+
+        return NoContent();
     }
 }

@@ -1,6 +1,6 @@
 namespace NaKolachServer.Domain.Routes;
 
-public record RouteUsers
+public record RouteUser
 (
     Guid UserId,
     Guid RouteId
