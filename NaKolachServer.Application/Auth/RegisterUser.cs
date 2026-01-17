@@ -16,7 +16,7 @@ public class RegisterUser(IUserPasswordHasher passwordHasher, IUsersRepository u
         };
 
         var userExists = await usersRepository.CheckIfUserExistsByLoginAndEmail(login, email, cancellationToken);
-        if (userExists) throw new UserExistsException("User already exists.");
+        if (userExists) throw new UserActionNotAllowedException("User already exists.");
 
         user.PasswordHash = passwordHasher.HashPassword(user, password);
 

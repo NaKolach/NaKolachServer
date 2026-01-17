@@ -51,6 +51,7 @@ public class AuthController(
         return NoContent();
     }
 
+    [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
@@ -65,14 +66,13 @@ public class AuthController(
         return NoContent();
     }
 
-    [Authorize]
     [HttpPost("refresh")]
-    public async Task<IActionResult> RefreshAccessToken(CancellationToken cancellationToken)
+    public async Task<IActionResult> RefreshAccessToken([FromBody] RefreshAccessTokenDto dto, CancellationToken cancellationToken)
     {
         if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             return BadRequest("Refresh Token is missing.");
 
-        var tokenPair = await refreshUserCredential.Execute(User.GetContext(), refreshToken, cancellationToken);
+        var tokenPair = await refreshUserCredential.Execute(dto.UserId, refreshToken, cancellationToken);
         return Ok(new { AccessToken = tokenPair.Item1, RefreshToken = tokenPair.Item2 });
     }
 }
