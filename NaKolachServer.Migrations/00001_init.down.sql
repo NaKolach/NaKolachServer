@@ -1,1 +1,5 @@
+DROP TABLE IF EXISTS routes;
+DROP TABLE IF EXISTS route_users;
+
+DROP TABLE IF EXISTS user_refresh_tokens;
 DROP TABLE IF EXISTS users;

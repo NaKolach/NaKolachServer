@@ -1,6 +1,12 @@
+using System.Drawing;
+
 namespace NaKolachServer.Domain.Routes;
 
 public record Route
 (
-    Path[] Paths
+    Guid Id,
+    Guid AuthorId,
+    Path Path,
+    Point[] Points,
+    DateTimeOffset CreatedAt
 );

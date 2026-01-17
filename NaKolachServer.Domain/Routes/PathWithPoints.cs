@@ -1,3 +1,5 @@
+using NaKolachServer.Domain.Points;
+
 namespace NaKolachServer.Domain.Routes;
 
 public record PathWithPoints
@@ -5,5 +7,5 @@ public record PathWithPoints
     double Distance,
     long Time,
     double[][] Paths,
-    Points.Point[] Points
+    Point[] Points
 );

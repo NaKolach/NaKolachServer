@@ -8,7 +8,7 @@ namespace NaKolachServer.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RoutesController(CalculateRoute calculateRoute) : ControllerBase
+public class RoutesController(CalculateRouteInRadius calculateRoute) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetRoute([FromQuery] PointsSearchParams searchParams, CancellationToken cancellationToken)

@@ -102,7 +102,7 @@ builder.Services.AddScoped<RevokeUserCredentials>();
 
 builder.Services.AddScoped<GetPoints>();
 
-builder.Services.AddScoped<CalculateRoute>();
+builder.Services.AddScoped<CalculateRouteInRadius>();
 
 var app = builder.Build();
 
