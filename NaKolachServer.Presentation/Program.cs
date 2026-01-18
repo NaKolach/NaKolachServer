@@ -107,6 +107,7 @@ builder.Services.AddScoped<GetRouteById>();
 builder.Services.AddScoped<AssignRouteToUser>();
 builder.Services.AddScoped<UnassignAssignRouteToUser>();
 builder.Services.AddScoped<CalculateRouteInRadius>();
+builder.Services.AddScoped<CalculateCustomRoute>();
 
 var app = builder.Build();
 

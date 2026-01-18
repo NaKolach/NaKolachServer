@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using NaKolachServer.Application.Routes;
 using NaKolachServer.Domain.Points;
+using NaKolachServer.Domain.Routes;
 using NaKolachServer.Presentation.Utils;
 
 namespace NaKolachServer.Presentation.Controllers;
@@ -12,7 +13,8 @@ namespace NaKolachServer.Presentation.Controllers;
 [Route("api/[controller]")]
 public class RoutesController(
     GetRouteById getRouteById,
-    CalculateRouteInRadius calculateRoute,
+    CalculateRouteInRadius calculateRouteInRadius,
+    CalculateCustomRoute calculateCustomRoute,
     AssignRouteToUser assignRouteToUser,
     UnassignAssignRouteToUser unassignRouteToUser
 ) : ControllerBase
@@ -27,7 +29,14 @@ public class RoutesController(
     [HttpGet]
     public async Task<IActionResult> GetRoute([FromQuery] PointsSearchParams searchParams, CancellationToken cancellationToken)
     {
-        var data = await calculateRoute.Execute(User.GetContext(), searchParams, cancellationToken);
+        var data = await calculateRouteInRadius.Execute(User.GetContext(), searchParams, cancellationToken);
+        return Ok(data);
+    }
+
+    [HttpGet("/custom")]
+    public async Task<IActionResult> GetCustomRoute([FromQuery] CustomRouteSearchParams searchParams, CancellationToken cancellationToken)
+    {
+        var data = await calculateCustomRoute.Execute(User.GetContext(), searchParams, cancellationToken);
         return Ok(data);
     }
 

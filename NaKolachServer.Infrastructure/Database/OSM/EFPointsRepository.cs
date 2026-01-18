@@ -6,6 +6,16 @@ namespace NaKolachServer.Infrastructure.Database.OSM;
 
 public class EFPointsRepository(OSMDatabaseContext databaseContext) : IPointsRepository
 {
+    public async Task<Point?> GetPointById(long id, CancellationToken cancellationToken)
+    {
+        var point = await databaseContext.PlanetOsmPoint.FirstOrDefaultAsync(p => p.OsmId == id, cancellationToken);
+        var category = point?.Amenity ?? point?.Shop ?? point?.Tourism ?? point?.Leisure;
+
+        return point is null
+            ? null
+            : new Point(point.OsmId, point.Name, category, point.Way.Coordinate.X, point.Way.Coordinate.Y);
+    }
+
     public async Task<Point[]> GetPoints(PointsSearchParams searchParams, CancellationToken cancellationToken)
     {
         var centerLocation = new NetTopologySuite.Geometries.Point(searchParams.Latitude, searchParams.Longitude) { SRID = 3857 };
