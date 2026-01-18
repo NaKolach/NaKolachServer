@@ -9,7 +9,7 @@ namespace NaKolachServer.Application.Routes;
 
 public class CalculateRouteInRadius(IPointsRepository pointsRepository, IRoutesRepository routesRepository, IRouteProvider routeProvider)
 {
-    public async Task<PathWithPoints[]> Execute(UserContext userContext, PointsSearchParams searchParams, CancellationToken cancellationToken)
+    public async Task<Route[]> Execute(UserContext userContext, PointsSearchParams searchParams, CancellationToken cancellationToken)
     {
         var startPoint = CRSConverter.CRS4326to3857(searchParams.Longitude, searchParams.Latitude);
 
@@ -27,30 +27,25 @@ public class CalculateRouteInRadius(IPointsRepository pointsRepository, IRoutesR
             pointsOfInterest.Add(pointOfInterest);
         }
 
-        var route = await routeProvider.CalculateRoute([
+        var calculatedRoute = await routeProvider.CalculateRoute([
             new Coordinates(searchParams.Longitude, searchParams.Latitude),
             .. pointsOfInterest.Select(p => new Coordinates(p.Longitude, p.Latitude)),
             new Coordinates(searchParams.Longitude, searchParams.Latitude)],
          cancellationToken);
 
-        await routesRepository.InsertRoute(new Route(
+        var route = new Route(
             Id: Guid.NewGuid(),
             AuthorId: userContext.Id,
-            Distance: route.Distance,
-            Time: route.Time,
-            Path: JsonConvert.SerializeObject(route.Paths),
+            Distance: calculatedRoute.Distance,
+            Time: calculatedRoute.Time,
+            Path: JsonConvert.SerializeObject(calculatedRoute.Paths),
             Categories: [.. pointsOfInterest.Where(p => p.Category is not null).Select(p => p.Category)],
             Points: JsonConvert.SerializeObject(pointsOfInterest),
             CreatedAt: DateTimeOffset.UtcNow
-        ), cancellationToken);
+        );
 
-        return [
-            new PathWithPoints(
-                route.Distance,
-                route.Time,
-                route.Paths,
-                [.. pointsOfInterest]
-            )
-        ];
+        await routesRepository.InsertRoute(route, cancellationToken);
+
+        return [route];
     }
 }

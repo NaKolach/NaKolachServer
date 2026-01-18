@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Diagnostics;
 
 using NaKolachServer.Domain.Auth;
+using NaKolachServer.Domain.Routes;
 using NaKolachServer.Domain.Users;
 using NaKolachServer.Domain.Utils;
 
@@ -39,6 +40,7 @@ internal sealed class BusinessExceptionHandler : IExceptionHandler
                 httpContext.Response.StatusCode = responseBody.StatusCode;
                 break;
             case UserNotFoundException:
+            case RouteNotFoundException:
                 responseBody.StatusCode = StatusCodes.Status404NotFound;
                 httpContext.Response.StatusCode = responseBody.StatusCode;
                 break;

@@ -35,10 +35,9 @@ public class EFRoutesRepository(DatabaseContext databaseContext) : IRoutesReposi
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteUserRoute(Guid id, Guid userId, CancellationToken cancellationToken)
+    public async Task RemoveUserRoute(RouteUser routeUser, CancellationToken cancellationToken)
     {
-        await databaseContext.RouteUsers
-            .Where(r => r.RouteId == id && r.UserId == userId)
-            .ExecuteDeleteAsync(cancellationToken);
+        databaseContext.RouteUsers.Remove(routeUser);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 }
