@@ -3,13 +3,13 @@ using NaKolachServer.Domain.Users;
 
 namespace NaKolachServer.Application.Routes;
 
-public class UnassignAssignRouteToUser(IRoutesRepository routesRepository)
+public class UpdateRouteName(IRoutesRepository routesRepository)
 {
-    public async Task Execute(UserContext userContext, Guid routeId, CancellationToken cancellationToken)
+    public async Task Execute(UserContext userContext, Guid routeId, string name, CancellationToken cancellationToken)
     {
         _ = await routesRepository.GetRouteById(routeId, cancellationToken)
             ?? throw new RouteNotFoundException($"Route with id {routeId} not found.");
 
-        await routesRepository.RemoveUserRoute(routeId, userContext.Id, cancellationToken);
+        await routesRepository.UpdateUserRouteName(routeId, userContext.Id, name, cancellationToken);
     }
 }

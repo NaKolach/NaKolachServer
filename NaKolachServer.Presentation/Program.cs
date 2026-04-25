@@ -103,8 +103,10 @@ builder.Services.AddScoped<RevokeUserCredentials>();
 
 builder.Services.AddScoped<GetPoints>();
 
+builder.Services.AddScoped<GetRoutesByUserId>();
 builder.Services.AddScoped<GetRouteById>();
 builder.Services.AddScoped<AssignRouteToUser>();
+builder.Services.AddScoped<UpdateRouteName>();
 builder.Services.AddScoped<UnassignAssignRouteToUser>();
 builder.Services.AddScoped<CalculateRouteInRadius>();
 builder.Services.AddScoped<CalculateCustomRoute>();

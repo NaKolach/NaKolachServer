@@ -10,6 +10,6 @@ public class AssignRouteToUser(IRoutesRepository routesRepository)
         _ = await routesRepository.GetRouteById(routeId, cancellationToken)
             ?? throw new RouteNotFoundException($"Route with id {routeId} not found.");
 
-        await routesRepository.InsertUserRoute(new RouteUser(routeId, userContext.Id), cancellationToken);
+        await routesRepository.InsertUserRoute(new RouteUser(userContext.Id, routeId, DateTimeOffset.UtcNow.ToString("d")), cancellationToken);
     }
 }

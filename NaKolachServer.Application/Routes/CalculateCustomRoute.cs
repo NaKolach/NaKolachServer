@@ -9,7 +9,7 @@ namespace NaKolachServer.Application.Routes;
 
 public class CalculateCustomRoute(IPointsRepository pointsRepository, IRoutesRepository routesRepository, IRouteProvider routeProvider)
 {
-    public async Task<Route[]> Execute(UserContext userContext, CustomRouteSearchParams searchParams, CancellationToken cancellationToken)
+    public async Task<RouteResponse[]> Execute(UserContext userContext, CustomRouteSearchParams searchParams, CancellationToken cancellationToken)
     {
         var startPoint = CRSConverter.CRS4326to3857(searchParams.Longitude, searchParams.Latitude);
 
@@ -43,6 +43,15 @@ public class CalculateCustomRoute(IPointsRepository pointsRepository, IRoutesRep
 
         await routesRepository.InsertRoute(route, cancellationToken);
 
-        return [route];
+        return [new RouteResponse(
+            Id: route.Id,
+            AuthorId: userContext.Id,
+            Distance: calculatedRoute.Distance,
+            Time: calculatedRoute.Time,
+            Paths: calculatedRoute.Paths,
+            Categories: [.. pointsOfInterest.Where(p => p.Category is not null).Select(p => p.Category)],
+            Points: [.. pointsOfInterest],
+            CreatedAt: DateTimeOffset.UtcNow
+        )];
     }
 }

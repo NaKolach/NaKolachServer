@@ -33,6 +33,7 @@ CREATE TABLE routes (
 CREATE TABLE route_users (
     route_id UUID NOT NULL,
     user_id UUID NOT NULL,
+    name VARCHAR(50) NOT NULL,
 
     CONSTRAINT pk_route_users PRIMARY KEY (route_id, user_id),
 

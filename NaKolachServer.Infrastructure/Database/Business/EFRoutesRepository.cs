@@ -12,14 +12,14 @@ public class EFRoutesRepository(DatabaseContext databaseContext) : IRoutesReposi
         return await databaseContext.Routes.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
     }
 
-    public async Task<Route[]> GetRoutesByUserId(Guid userId, CancellationToken cancellationToken)
+    public async Task<RouteData[]> GetRoutesByUserId(Guid userId, CancellationToken cancellationToken)
     {
         return await databaseContext.RouteUsers
             .Where(ru => ru.UserId == userId)
             .Join(databaseContext.Routes,
                 ru => ru.RouteId,
                 r => r.Id,
-                (ru, r) => r)
+                (ru, r) => new RouteData(r.Id, ru.Name, r.Distance, r.Time, r.Categories))
             .ToArrayAsync(cancellationToken);
     }
 
@@ -35,9 +35,15 @@ public class EFRoutesRepository(DatabaseContext databaseContext) : IRoutesReposi
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task RemoveUserRoute(RouteUser routeUser, CancellationToken cancellationToken)
+    public async Task UpdateUserRouteName(Guid id, Guid userId, string name, CancellationToken cancellationToken)
     {
-        databaseContext.RouteUsers.Remove(routeUser);
-        await databaseContext.SaveChangesAsync(cancellationToken);
+        await databaseContext.RouteUsers.Where(rt => rt.RouteId == id && rt.UserId == userId)
+            .ExecuteUpdateAsync(s => s.SetProperty(rt => rt.Name, name), cancellationToken);
+    }
+
+    public async Task RemoveUserRoute(Guid id, Guid userId, CancellationToken cancellationToken)
+    {
+        await databaseContext.RouteUsers.Where(r => r.RouteId == id && r.UserId == userId)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 }
