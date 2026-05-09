@@ -13,48 +13,59 @@ public class CalculateRouteInRadius(IPointsRepository pointsRepository, IRoutesR
     {
         var startPoint = CRSConverter.CRS4326to3857(searchParams.Longitude, searchParams.Latitude);
 
-        var pointsOfInterest = new List<Point>();
-        foreach (var category in searchParams.Categories)
+        var routeCount = 3;
+        var routes = new RouteResponse[routeCount];
+
+        for (var i = 0; i < routeCount; i++)
         {
-            var pointOfInterest = await pointsRepository.GetRandomPointByCategory(
-                category, startPoint.X, startPoint.Y, searchParams.Radius, cancellationToken
-            );
+            var pointsOfInterest = new List<Point>();
+            foreach (var category in searchParams.Categories)
+            {
+                var pointOfInterest = await pointsRepository.GetRandomPointByCategory(
+                    category, startPoint.X, startPoint.Y, searchParams.Radius, cancellationToken
+                );
 
-            if (pointOfInterest is null) return [];
+                if (pointOfInterest is null) break;
 
-            var pointConverted = CRSConverter.CRS3857to4326(pointOfInterest.Longitude, pointOfInterest.Latitude);
-            pointOfInterest = pointOfInterest with { Latitude = pointConverted.Y, Longitude = pointConverted.X };
-            pointsOfInterest.Add(pointOfInterest);
-        }
+                var pointConverted = CRSConverter.CRS3857to4326(pointOfInterest.Longitude, pointOfInterest.Latitude);
+                pointOfInterest = pointOfInterest with { Latitude = pointConverted.Y, Longitude = pointConverted.X };
+                pointsOfInterest.Add(pointOfInterest);
+            }
 
-        var calculatedRoute = await routeProvider.CalculateRoute([
-            new Coordinates(searchParams.Longitude, searchParams.Latitude),
+            if (pointsOfInterest.Count == 0) continue;
+
+            var calculatedRoute = await routeProvider.CalculateRoute([
+                new Coordinates(searchParams.Longitude, searchParams.Latitude),
             .. pointsOfInterest.Select(p => new Coordinates(p.Longitude, p.Latitude)),
             new Coordinates(searchParams.Longitude, searchParams.Latitude)],
-         cancellationToken);
+                searchParams.RoadCategory,
+             cancellationToken);
 
-        var route = new Route(
-            Id: Guid.NewGuid(),
-            AuthorId: userContext.Id,
-            Distance: calculatedRoute.Distance,
-            Time: calculatedRoute.Time,
-            Path: JsonConvert.SerializeObject(calculatedRoute.Paths),
-            Categories: [.. pointsOfInterest.Where(p => p.Category is not null).Select(p => p.Category)],
-            Points: JsonConvert.SerializeObject(pointsOfInterest),
-            CreatedAt: DateTimeOffset.UtcNow
-        );
+            var route = new Route( // todo make generic
+                Id: Guid.NewGuid(),
+                AuthorId: userContext.Id,
+                Distance: calculatedRoute.Distance,
+                Time: calculatedRoute.Time,
+                Path: JsonConvert.SerializeObject(calculatedRoute.Paths),
+                Categories: [.. pointsOfInterest.Where(p => p.Category is not null).Select(p => p.Category)],
+                Points: JsonConvert.SerializeObject(pointsOfInterest),
+                CreatedAt: DateTimeOffset.UtcNow
+            );
 
-        await routesRepository.InsertRoute(route, cancellationToken);
+            await routesRepository.InsertRoute(route, cancellationToken);
 
-        return [new RouteResponse(
-            Id: route.Id,
-            AuthorId: userContext.Id,
-            Distance: calculatedRoute.Distance,
-            Time: calculatedRoute.Time,
-            Paths: calculatedRoute.Paths,
-            Categories: [.. pointsOfInterest.Where(p => p.Category is not null).Select(p => p.Category)],
-            Points: [.. pointsOfInterest],
-            CreatedAt: DateTimeOffset.UtcNow
-        )];
+            routes[i] = new RouteResponse( // todo make generic
+                Id: route.Id,
+                AuthorId: userContext.Id,
+                Distance: calculatedRoute.Distance,
+                Time: calculatedRoute.Time,
+                Paths: calculatedRoute.Paths,
+                Categories: [.. pointsOfInterest.Where(p => p.Category is not null).Select(p => p.Category)],
+                Points: [.. pointsOfInterest],
+                CreatedAt: DateTimeOffset.UtcNow
+            );
+        }
+
+        return routes;
     }
 }

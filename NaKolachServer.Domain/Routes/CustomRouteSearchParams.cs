@@ -1,9 +1,10 @@
-using NaKolachServer.Domain.Points;
+using NaKolachServer.Domain.Roads;
 
 namespace NaKolachServer.Domain.Routes;
 
 public record CustomRouteSearchParams(
     double Latitude,
     double Longitude,
-    long[] Points
+    long[] Points,
+    RoadCategory RoadCategory
 );

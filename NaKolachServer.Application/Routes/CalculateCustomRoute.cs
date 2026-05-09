@@ -28,6 +28,7 @@ public class CalculateCustomRoute(IPointsRepository pointsRepository, IRoutesRep
             new Coordinates(searchParams.Longitude, searchParams.Latitude),
             .. pointsOfInterest.Select(p => new Coordinates(p.Longitude, p.Latitude)),
             new Coordinates(searchParams.Longitude, searchParams.Latitude)],
+            searchParams.RoadCategory,
          cancellationToken);
 
         var route = new Route(

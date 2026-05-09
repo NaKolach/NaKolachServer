@@ -18,8 +18,6 @@ public static class ClaimsExtensions
             ?? user.FindFirstValue("name")
             ?? throw new Exception("Token is missing name.");
 
-        Console.WriteLine("XD ", userId, login);
-
         return new UserContext(Guid.Parse(userId), login);
     }
 }

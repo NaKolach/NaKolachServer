@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 
+using NaKolachServer.Domain.Roads;
 using NaKolachServer.Domain.Routes;
 
 using Newtonsoft.Json;
@@ -8,11 +9,11 @@ namespace NaKolachServer.Infrastructure.RouteProviders;
 
 public class GraphhopperRouteProvider(HttpClient httpClient) : IRouteProvider
 {
-    public async Task<Domain.Routes.Path> CalculateRoute(Coordinates[] coordinates, CancellationToken cancellationToken)
+    public async Task<Domain.Routes.Path> CalculateRoute(Coordinates[] coordinates, RoadCategory roadCategory, CancellationToken cancellationToken)
     {
         var body = new
         {
-            profile = "bike",
+            profile = roadCategory.ToString().ToLower(),
             points = coordinates.Select(c => new[] { c.X, c.Y }),
             points_encoded = false,
             snap_preventions = new[] { "motorway", "ferry", "tunnel" },
@@ -40,7 +41,7 @@ public class GraphhopperRouteProvider(HttpClient httpClient) : IRouteProvider
         var route = JsonConvert.DeserializeObject<GraphhopperRouteResponse>(responseContent)
             ?? throw new Exception("Cannot deserialize graphhopper route response.");
 
-        return MapToPath(route.Paths.First()); // todo possible error if no paths found
+        return MapToPath(route.Paths.First());
     }
 
     private static Domain.Routes.Path MapToPath(GraphhopperPath path)
